@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vloom"
+version = "0.1.0"
+description = "Config-driven pipeline framework for sampling large vision-language model data"
+requires-python = ">=3.10"
+dependencies = [
+    "draccus",
+    "openai",
+    "tenacity",
+    "Pillow",
+    "aiofiles",
+    "jinja2",
+    "tqdm",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+coco = ["pycocotools", "numpy"]
+dev = ["pytest", "ruff"]
+
+[project.scripts]
+vloom = "vloom.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vloom"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"templates" = "templates"

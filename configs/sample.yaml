@@ -1,0 +1,39 @@
+# VLooM Sample Configuration
+# A minimal example demonstrating basic VQA with a COCO dataset.
+
+output_root: ./outputs
+exp_name: demo_basic_qa
+template_dir: templates
+max_concurrent: 4
+log_level: INFO
+
+model:
+  model_name: Qwen/Qwen2.5-VL-7B-Instruct
+  base_url: http://localhost:8000/v1
+  api_key: EMPTY
+  generation_kwargs:
+    max_tokens: 2048
+    temperature: 0.7
+    top_p: 0.9
+
+datasets:
+  - type: coco
+    name: demo_coco_dataset
+    description: A demo COCO dataset
+    data_dir: datasets/demo
+    json_file: train.json
+    img_subdir: images
+
+task_definitions:
+  - type: default
+    name: basic_qa
+    description: Standard VQA task
+    agent_type: basic
+    templates:
+      usr: task/basic_qa.j2
+    image_config:
+      max_image_size: 1024
+      min_pixels: 50176
+
+run_tasks:
+  - basic_qa

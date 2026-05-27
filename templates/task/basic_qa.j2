@@ -1,0 +1,11 @@
+Look at the image and answer the following question.
+
+Image: {{ img_name }}
+{% if gt_label is defined %}
+Ground truth label: {{ gt_label }}
+{% endif %}
+{% if gt_bbox is defined %}
+Ground truth bounding box: {{ gt_bbox }}
+{% endif %}
+
+Please describe what you see in this image.

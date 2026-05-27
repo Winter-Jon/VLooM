@@ -1,0 +1,74 @@
+# VLooM Base Pipeline Configuration
+# This file documents all available configuration options with their defaults.
+
+# ==============================================================================
+# PathConfig
+# ==============================================================================
+output_root: outputs
+# exp_name: experiment_v1  # Optional experiment name, uses timestamp if empty
+template_dir: templates    # Default template directory (bundled with VLooM)
+
+# ==============================================================================
+# PipelineConfig
+# ==============================================================================
+# auto_task_dir: task       # Auto-discover tasks from template_dir/<auto_task_dir>/*.j2
+# run_tasks:                # List of task names to execute
+#   - example_task
+
+max_concurrent: 32
+log_level: INFO
+log_interval: 100
+
+# ==============================================================================
+# ModelConfig
+# ==============================================================================
+model:
+  model_name: Qwen/Qwen2.5-VL-7B-Instruct
+  base_url: http://127.0.0.1:30000/v1
+  api_key: ""
+  generation_kwargs:
+    max_tokens: 8192
+    temperature: 1.0
+    top_p: 0.9
+    min_pixels: 65536
+    max_pixels: 10035200
+    max_image_size: 1024
+    timeout: 300
+
+# ==============================================================================
+# DatasetConfig List
+# ==============================================================================
+# Each dataset needs a `type` that matches a registered subclass.
+# Built-in types: "coco", "yolo"
+# Register custom types via the `imports` mechanism.
+datasets: []
+  # - type: coco
+  #   name: My COCO Dataset
+  #   description: Description
+  #   data_dir: /path/to/coco/dataset
+  #   json_file: train.json
+  #   img_subdir: images
+  # - type: yolo
+  #   name: My YOLO Dataset
+  #   image_dir: /path/to/images
+  #   labels_dir: /path/to/labels
+  #   label_map: {0: "cat", 1: "dog"}
+
+# ==============================================================================
+# TaskConfig List
+# ==============================================================================
+task_definitions: []
+  # - type: default
+  #   name: basic_qa
+  #   description: Basic VQA task
+  #   agent_type: basic
+  #   templates:
+  #     usr: task/basic_qa.j2
+
+# ==============================================================================
+# External Module Imports
+# ==============================================================================
+# List of Python modules to import before parsing config.
+# This allows external DatasetConfig/TaskConfig subclasses to register.
+imports: []
+  # - my_project.datasets
