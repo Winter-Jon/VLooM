@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import json
-import aiofiles
 from pathlib import Path
 from typing import Dict, Any, List
 from dataclasses import asdict
@@ -76,10 +75,14 @@ async def run_batch_task(
             total_usage["completion_tokens"] += u.get("completion_tokens", 0)
             total_usage["total_tokens"] += u.get("total_tokens", 0)
 
-    # 保存结果
+    # 保存结果. Use standard synchronous file IO here because all requests have
+    # already completed; this avoids event-loop/file-adapter compatibility issues
+    # observed in some restricted runtime environments.
     task_file = save_dir / f"{task_name}_results.json"
-    async with aiofiles.open(task_file, 'w', encoding='utf-8') as f:
-        await f.write(json.dumps(results, ensure_ascii=False, indent=2))
+    tmp_file = task_file.with_suffix(task_file.suffix + ".tmp")
+    with tmp_file.open("w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False, indent=2)
+    tmp_file.replace(task_file)
         
     success = sum(1 for v in results.values() if v and v.get('result'))
     failed = len(results) - success

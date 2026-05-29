@@ -65,13 +65,12 @@ class BaseAgent(ABC):
             image_kwargs: 图片处理参数 (min_pixels, max_pixels, etc.)
         """
         content = [{"type": "text", "text": text}]
+        task_img_cfg = self.config.image_config or {}
+        final_img_kwargs = {**task_img_cfg, **(image_kwargs or {})}
         
         if image_path:
             # Merge task-level image config with kwargs
             # Priority: kwarg > task_config > default
-            task_img_cfg = self.config.image_config or {}
-            final_img_kwargs = {**task_img_cfg, **image_kwargs}
-            
             # Extract preprocessing args (max_size) vs model args (min_pixels)
             # image_to_data_url only needs max_size
             max_size = final_img_kwargs.get('max_image_size', 1024)

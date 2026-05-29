@@ -105,6 +105,10 @@ class ModelConfig:
     model_name: str = "models/Qwen3-VL-235B-A22B-Thinking"
     base_url: str = "http://127.0.0.1:30000/v1"
     api_key: str = ""
+    api_key_envs: List[str] = field(
+        default_factory=lambda: ["OPENAI_API_KEY", "YUNWU_API_KEY"],
+        metadata={"help": "Environment variables to check when api_key is empty or EMPTY"},
+    )
     generation_kwargs: Dict[str, Any] = field(default_factory=lambda: {
         "max_tokens": 8192,
         "temperature": 1.0,

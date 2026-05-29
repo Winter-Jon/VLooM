@@ -1,10 +1,8 @@
 import logging
-import json
 from typing import Any, Dict, List, Optional
 
 from .base import BaseAgent
-from ..core.image_processor import image_to_data_url
-from ..core.parser import fix_json_content, parse_json
+from ..core.parser import parse_json_response
 # Circular import note: agents/registry.py does NOT import agents anymore.
 from .registry import AgentRegistry
 
@@ -85,10 +83,18 @@ class BasicAgent(BaseAgent):
             }
             
             # 3. 解析结果
-            try:
-                result = parse_json(content)
-                result_data["result"] = result
-            except Exception as e:
+            parsed = parse_json_response(content)
+            if parsed.result is not None:
+                result_data["result"] = parsed.result
+                if parsed.thinking and not result_data.get("thinking"):
+                    result_data["thinking"] = parsed.thinking
+                if parsed.repair_log:
+                    result_data["repair_log"] = parsed.repair_log
+            else:
+                if parsed.thinking and not result_data.get("thinking"):
+                    result_data["thinking"] = parsed.thinking
+                if parsed.repair_log:
+                    result_data["repair_log"] = parsed.repair_log
                 logger.warning(f"Failed to parse JSON for {item.img_name}: {content[:100]}...")
             
             return {item.img_name: result_data}
